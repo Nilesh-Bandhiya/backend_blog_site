@@ -10,7 +10,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
 
-app.use("/users", require("./routes/userRoutes"))
+app.use("/users", require("./routes/usersRoutes"))
+app.use("/blogs", require("./routes/blogsRoutes"))
 
 app.listen(port, () => {
     console.log(`blog-app listening on port ${port}`);
