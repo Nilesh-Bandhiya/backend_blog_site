@@ -1,5 +1,5 @@
-const User = require("../models/usersModel");
-const Blog = require("../models/blogsModel");
+const User = require("../models/userModel");
+const Blog = require("../models/blogModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -188,7 +188,7 @@ const getAllUsers = async (req, res) => {
     try {
         let user = await User.findById(req.user);
 
-        if (!user.role !== "admin") {
+        if (user.role !== "admin") {
             return res
               .status(400)
               .json({ msg: "Only Admin has access the all Users" });
