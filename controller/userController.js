@@ -1,5 +1,5 @@
-const User = require("../models/usersModel");
-const Blog = require("../models/blogsModel");
+const User = require("../models/userModel");
+const Blog = require("../models/blogModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -62,8 +62,6 @@ const loginUser = async (req, res) => {
       expiresIn: 360000,
     });
 
-  
-
     const { password, ...userData } = user._doc;
 
     res
@@ -75,15 +73,15 @@ const loginUser = async (req, res) => {
   }
 };
 
-// const logoutUser = async (req, res) => {
-//   try {
-//     res.clearCookie("token");
-//     res.status(200).json({ msg: "User Logged Out Successfully" });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).json({ msg: "Internal Server Error" });
-//   }
-// };
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ msg: "User Logged Out Successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
 
 const getMe = async (req, res) => {
   try {
