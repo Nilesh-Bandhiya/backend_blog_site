@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
 
     res
       .status(201)
-      .json({ msg: "User Registerd Successfully", data: userData });
+      .json({ msg: "User Registered Successfully", data: userData });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Internal Server Error" });
@@ -62,13 +62,11 @@ const loginUser = async (req, res) => {
       expiresIn: 360000,
     });
 
-    res.cookie("token", token, { httpOnly: true, expiresIn: 360000 });
-
     const { password, ...userData } = user._doc;
 
     res
       .status(200)
-      .json({ msg: "User Logged In Successfully", data: userData });
+      .json({ msg: "User Logged In Successfully", data: userData, token: token });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: "Internal Server Error" });
@@ -188,7 +186,7 @@ const getAllUsers = async (req, res) => {
     try {
         let user = await User.findById(req.user);
 
-        if (!user.role !== "admin") {
+        if (user.role !== "admin") {
             return res
               .status(400)
               .json({ msg: "Only Admin has access the all Users" });
