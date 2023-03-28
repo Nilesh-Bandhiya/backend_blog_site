@@ -39,7 +39,7 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: formData.email });
     if (!user) {
-      return res.status(404).json({ msg: "User Not Found" });
+      return res.status(404).json({ msg: "User Not Found 12" });
     }
 
     const isMatch = await bcrypt.compare(formData.password, user.password);
@@ -73,16 +73,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-const logoutUser = async (req, res) => {
-  try {
-    res.clearCookie("token");
-    res.status(200).json({ msg: "User Logged Out Successfully" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
-  }
-};
-
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user);
@@ -99,7 +89,7 @@ const getMe = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const formData = req.body;
+  const {role, active, ...formData} = req.body;
   try {
     let user = await User.findById(req.user);
 
@@ -111,8 +101,29 @@ const updateUser = async (req, res) => {
     if (exists && exists._id?.toString() !== user._id?.toString()) {
       return res.status(404).json({ msg: "Email Already Exists" });
     }
-
+   
     const updetedUser = await User.findByIdAndUpdate(user._id, formData, {
+      new: true,
+    });
+
+    const { password, ...userData } = updetedUser._doc;
+
+    res.status(200).json({ msg: "Profile Updated Successfully", data: userData });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+const changeRoleAndStatus = async (req, res) => {
+  const {_id, role, active} = req.body;
+  try {
+    let user = await User.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not Found" });
+    }
+
+    const updetedUser = await User.findByIdAndUpdate(user._id, {role, active}, {
       new: true,
     });
 
@@ -120,22 +131,22 @@ const updateUser = async (req, res) => {
 
     res.status(200).json({ msg: "User Updated Successfully", data: userData });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);   
     res.status(500).json({ msg: "Internal Server Error" });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
-    let user = await User.findById(req.user);
+    let user = await User.findById(req.params?.userId);
 
     if (!user) {
       return res.status(404).json({ msg: "User not Found" });
     }
 
-    const blogs = await Blog.find({userId: req.user})
+    const blogs = await Blog.find({userId: user._id})
     if (blogs) {
-      await Blog.deleteMany({userId: req.user});
+      await Blog.deleteMany({userId: user._id});
     }
 
     await User.findByIdAndDelete(user._id);
@@ -183,15 +194,7 @@ const changePassword = async (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-    try {
-        let user = await User.findById(req.user);
-
-        if (user.role !== "admin") {
-            return res
-              .status(400)
-              .json({ msg: "Only Admin has access the all Users" });
-          }
-        
+    try { 
         const users = await User.find({});
         res.status(200).json({msg: "Users fetch SuccessFully", data: users})
 
@@ -204,9 +207,9 @@ const getAllUsers = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  logoutUser,
   getMe,
   updateUser,
+  changeRoleAndStatus,
   deleteUser,
   changePassword,
   getAllUsers

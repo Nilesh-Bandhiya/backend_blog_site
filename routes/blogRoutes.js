@@ -7,14 +7,14 @@ const {
   deleteBlog,
   getMyBlogs
 } = require("../controller/blogController");
-const authorizeUser = require("../middleware/auth");
+const { authorizeUser, authorizeAdmin } = require("../middleware/auth");
 const router = new express.Router();
 
-router.get("/", authorizeUser, getAllBlogs);
-router.get("/myblogs", authorizeUser, getMyBlogs);
-router.post("/add", authorizeUser, addBlog);
+router.get("/", getAllBlogs);
+router.get("/myblogs", authorizeAdmin, getMyBlogs);
+router.post("/add", authorizeAdmin, addBlog);
 router.get("/:blogId", authorizeUser, getBlog);
-router.patch("/update/:blogId", authorizeUser, updateBlog);
-router.delete("/delete/:blogId", authorizeUser, deleteBlog);
+router.patch("/update/:blogId", authorizeAdmin, updateBlog);
+router.delete("/delete/:blogId", authorizeAdmin, deleteBlog);
 
 module.exports = router;

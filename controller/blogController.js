@@ -4,22 +4,17 @@ const User = require("../models/userModel");
 const addBlog = async (req, res) => {
   const formData = req.body;
   try {
-    let user = await User.findById(req.user);
-    if (user.role !== "admin") {
-      return res
-        .status(400)
-        .json({ msg: "Only Admin has access the add Blog" });
-    }
     const data = { ...formData, userId: req.user };
     const blog = new Blog(data);
-    const cretedBlog = await blog.save();
+    const createdBlog = await blog.save();
 
-    res.status(201).json({ msg: "Blog Added Successfully", data: cretedBlog });
+    res.status(201).json({ msg: "Blog Added Successfully", data: createdBlog });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
 const getBlog = async (req, res) => {
   const { blogId } = req.params;
   try {
@@ -35,6 +30,7 @@ const getBlog = async (req, res) => {
     res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
 const updateBlog = async (req, res) => {
   const { blogId } = req.params;
   const formData = req.body;
@@ -43,13 +39,6 @@ const updateBlog = async (req, res) => {
 
     if (!blog) {
       return res.status(404).json({ msg: "Blog not Found" });
-    }
-
-    let user = await User.findById(req.user);
-    if (user.role !== "admin") {
-      return res
-        .status(400)
-        .json({ msg: "Only Admin has access the update Blog" });
     }
 
     if (blog.userId.toString() !== req.user.toString()) {
@@ -68,6 +57,7 @@ const updateBlog = async (req, res) => {
     res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
 const deleteBlog = async (req, res) => {
   const { blogId } = req.params;
   try {
@@ -75,13 +65,6 @@ const deleteBlog = async (req, res) => {
 
     if (!blog) {
       return res.status(404).json({ msg: "Blog not Found" });
-    }
-
-    let user = await User.findById(req.user);
-    if (user.role !== "admin") {
-      return res
-        .status(400)
-        .json({ msg: "Only Admin has access the update Blog" });
     }
 
     if (blog.userId.toString() !== req.user.toString()) {
@@ -96,11 +79,13 @@ const deleteBlog = async (req, res) => {
     res.status(500).json({ msg: "Internal Server Error" });
   }
 };
+
 const getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find({});
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
   } catch (error) {
+    console.log("error from getAllBlogs");
     console.log(error);
     res.status(500).json({ msg: "Internal Server Error" });
   }
