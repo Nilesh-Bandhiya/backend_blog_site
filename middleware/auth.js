@@ -38,7 +38,6 @@ const authorizeAdmin = async (req, res, next) => {
         .json({ msg: "Authorize Yourself as a Admin" });
     }
     req.user = decoded.user;
-    console.log(req.user);
     next();
   } catch (error) {
     console.log(error.message);
