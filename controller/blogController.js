@@ -1,9 +1,13 @@
 const Blog = require("../models/blogModel");
 
+
 const addBlog = async (req, res) => {
   const formData = req.body;
+  console.log("data",formData);
+  console.log("image",req.file);
+
   try {
-    const data = { ...formData, userId: req.user };
+    const data = { ...formData, image: req.file.filename, userId: req.user };
     const blog = new Blog(data);
     const createdBlog = await blog.save();
 
