@@ -16,7 +16,7 @@ const authorizeUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -41,7 +41,7 @@ const authorizeAdmin = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 

@@ -1,5 +1,4 @@
 const Blog = require("../models/blogModel");
-const User = require("../models/userModel");
 
 const addBlog = async (req, res) => {
   const formData = req.body;
@@ -10,8 +9,8 @@ const addBlog = async (req, res) => {
 
     res.status(201).json({ msg: "Blog Added Successfully", data: createdBlog });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -26,8 +25,8 @@ const getBlog = async (req, res) => {
 
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blog });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -53,8 +52,8 @@ const updateBlog = async (req, res) => {
       .status(200)
       .json({ msg: "Blog Updated Successfully", data: updetedBlog });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -75,8 +74,8 @@ const deleteBlog = async (req, res) => {
 
     res.status(200).json({ msg: "Blog Deleted Successfully" });
   } catch (error) { 
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -85,9 +84,8 @@ const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find({});
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
   } catch (error) {
-    console.log("error from getAllBlogs");
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -96,8 +94,8 @@ const getMyBlogs = async (req, res) => {
     const blogs = await Blog.find({ userId: req.user });
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 

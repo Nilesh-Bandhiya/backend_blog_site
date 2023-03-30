@@ -28,8 +28,8 @@ const registerUser = async (req, res) => {
       .status(201)
       .json({ msg: "User Registered Successfully", data: userData });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -69,7 +69,7 @@ const loginUser = async (req, res) => {
       .json({ msg: "User Logged In Successfully", data: userData, token: token });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -84,7 +84,7 @@ const getMe = async (req, res) => {
     res.status(200).json({ msg: "User Found", data: userData });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -110,8 +110,8 @@ const updateUser = async (req, res) => {
 
     res.status(200).json({ msg: "Profile Updated Successfully", data: userData });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
   }
 };
 const changeRoleAndStatus = async (req, res) => {
@@ -131,8 +131,8 @@ const changeRoleAndStatus = async (req, res) => {
 
     res.status(200).json({ msg: "User Updated Successfully", data: userData });
   } catch (error) {
-    console.log(error);   
-    res.status(500).json({ msg: "Internal Server Error" });
+    console.log(error.message);   
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -154,7 +154,7 @@ const deleteUser = async (req, res) => {
     res.status(200).json({ msg: "User Deleted Successfully" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -189,7 +189,7 @@ const changePassword = async (req, res) => {
     res.status(200).json({ msg: "Password Changed Successfully", data: userData });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -200,7 +200,7 @@ const getAllUsers = async (req, res) => {
 
     } catch (error) {
         console.log(error.message);
-    res.status(500).json({ msg: "Internal Server Error" });
+    res.status(500).json({ msg: error.message });
     }
 }
 
