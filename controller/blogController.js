@@ -3,11 +3,8 @@ const Blog = require("../models/blogModel");
 
 const addBlog = async (req, res) => {
   const formData = req.body;
-  console.log("data",formData);
-  console.log("image",req.file);
-
   try {
-    const data = { ...formData, image: req.file.filename, userId: req.user };
+    const data = { ...formData, image: req.file?.filename, userId: req.user };
     const blog = new Blog(data);
     const createdBlog = await blog.save();
 
@@ -27,6 +24,8 @@ const getBlog = async (req, res) => {
       return res.status(404).json({ msg: "Blog not Found" });
     }
 
+    blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blog });
   } catch (error) {
     console.log(error.message);
@@ -37,6 +36,7 @@ const getBlog = async (req, res) => {
 const updateBlog = async (req, res) => {
   const { blogId } = req.params;
   const formData = req.body;
+  const data = { ...formData, image: req.file?.filename };
   try {
     const blog = await Blog.findById(blogId);
 
@@ -44,11 +44,13 @@ const updateBlog = async (req, res) => {
       return res.status(404).json({ msg: "Blog not Found" });
     }
 
+    blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+
     if (blog.userId.toString() !== req.user.toString()) {
       return res.status(401).json({ msg: "Only Blog Owner Update the Blog" });
     }
 
-    const updetedBlog = await Blog.findByIdAndUpdate(blogId, formData, {
+    const updetedBlog = await Blog.findByIdAndUpdate(blogId, data, {
       new: true,
     });
 
@@ -57,7 +59,7 @@ const updateBlog = async (req, res) => {
       .json({ msg: "Blog Updated Successfully", data: updetedBlog });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ msg: error.message });
+    res.status(500).json({ msg: error });
   }
 };
 
@@ -86,6 +88,10 @@ const deleteBlog = async (req, res) => {
 const getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find({});
+
+    blogs.forEach((blog) => {
+      blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+    } )
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
   } catch (error) {
     console.log(error.message);

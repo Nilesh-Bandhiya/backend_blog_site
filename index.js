@@ -11,14 +11,13 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 
-
-
-
 app.use(cors());
 app.use(express.json())
 // app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'))
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
+
+app.use('/images', express.static('images'));
 
 app.use("/users", userRoutes)
 app.use("/blogs", blogRoutes)
