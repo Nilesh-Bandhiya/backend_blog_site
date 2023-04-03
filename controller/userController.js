@@ -1,7 +1,9 @@
 const User = require("../models/userModel");
 const Blog = require("../models/blogModel");
+const ResetToken = require("../models/resetPasswordModel")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
 
 const registerUser = async (req, res) => {
   const formData = req.body;
@@ -89,7 +91,7 @@ const getMe = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const {role, active, ...formData} = req.body;
+  const { role, active, ...formData } = req.body;
   try {
     let user = await User.findById(req.user);
 
@@ -101,7 +103,7 @@ const updateUser = async (req, res) => {
     if (exists && exists._id?.toString() !== user._id?.toString()) {
       return res.status(404).json({ msg: "Email Already Exists" });
     }
-   
+
     const updetedUser = await User.findByIdAndUpdate(user._id, formData, {
       new: true,
     });
@@ -115,7 +117,7 @@ const updateUser = async (req, res) => {
   }
 };
 const changeRoleAndStatus = async (req, res) => {
-  const {_id, role, active} = req.body;
+  const { _id, role, active } = req.body;
   try {
     let user = await User.findById(_id);
 
@@ -123,7 +125,7 @@ const changeRoleAndStatus = async (req, res) => {
       return res.status(404).json({ msg: "User not Found" });
     }
 
-    const updetedUser = await User.findByIdAndUpdate(user._id, {role, active}, {
+    const updetedUser = await User.findByIdAndUpdate(user._id, { role, active }, {
       new: true,
     });
 
@@ -131,7 +133,7 @@ const changeRoleAndStatus = async (req, res) => {
 
     res.status(200).json({ msg: "User Updated Successfully", data: userData });
   } catch (error) {
-    console.log(error.message);   
+    console.log(error.message);
     res.status(500).json({ msg: error.message });
   }
 };
@@ -144,9 +146,14 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ msg: "User not Found" });
     }
 
-    const blogs = await Blog.find({userId: user._id})
+    const blogs = await Blog.find({ userId: user._id })
     if (blogs) {
-      await Blog.deleteMany({userId: user._id});
+      await Blog.deleteMany({ userId: user._id });
+      blogs.forEach((blog) => {
+        fs.unlink(`./images/${blog.image}`, (err) => {
+          if (err) console.log(err);
+        });
+      })
     }
 
     await User.findByIdAndDelete(user._id);
@@ -157,6 +164,69 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
+const forgotPassword = async (req, res) => {
+  const formData = req.body;
+  try {
+    let user = await User.findOne({ email: formData?.email });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not Found" });
+    }
+
+    const payload = {
+      user: user._id,
+      email: user.email
+    };
+
+    const secret = process.env.JWT_SECRET + user.password
+
+    let token = jwt.sign(payload, secret, {
+      expiresIn: "5m",
+    });
+
+    token = new ResetToken({token})
+    const resetToken = await token.save()
+
+    const forgotLink = `${process.env.HOST_URL}3000/reset-password/${user._id}/${resetToken._id}`
+    console.log(forgotLink);
+    res.status(200).json({ msg: "Mail send successfully for forgot password", data: formData });
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
+  }
+
+}
+
+const resetPassword = async (req, res) => {
+  const { id, token } = req.params
+  try {
+    let user = await User.findOne({ _id: id });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not Found" });
+    }
+    const secret = process.env.JWT_SECRET + user.password
+
+    const verify = jwt.verify(token, secret)
+    console.log(Date.now() / 1000);
+    console.log(verify.exp);
+    console.log(verify.exp > new Date().toUTCString());
+    res.status(200).json({ msg: "Verified" })
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
+  }
+
+
+  console.log(id, token);
+}
+
+const verifyForPassword = async (req, res) => {
+
+}
 
 const changePassword = async (req, res) => {
   const formData = req.body;
@@ -194,14 +264,14 @@ const changePassword = async (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-    try { 
-        const users = await User.find({});
-        res.status(200).json({msg: "Users fetch SuccessFully", data: users})
+  try {
+    const users = await User.find({});
+    res.status(200).json({ msg: "Users fetch SuccessFully", data: users })
 
-    } catch (error) {
-        console.log(error.message);
+  } catch (error) {
+    console.log(error.message);
     res.status(500).json({ msg: error.message });
-    }
+  }
 }
 
 module.exports = {
@@ -211,6 +281,9 @@ module.exports = {
   updateUser,
   changeRoleAndStatus,
   deleteUser,
+  forgotPassword,
+  verifyForPassword,
+  resetPassword,
   changePassword,
   getAllUsers
 };
