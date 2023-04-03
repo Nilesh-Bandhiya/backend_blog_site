@@ -1,5 +1,6 @@
 const express = require('express')
-const { registerUser, loginUser, getMe, updateUser, deleteUser, changePassword, getAllUsers, changeRoleAndStatus, forgotPassword, resetPassword } = require('../controller/userController')
+const { verify } = require('jsonwebtoken')
+const { registerUser, loginUser, getMe, updateUser, deleteUser, changePassword, getAllUsers, changeRoleAndStatus, forgotPassword, resetPassword, verifyForPassword } = require('../controller/userController')
 const { authorizeUser, authorizeAdmin } = require('../middleware/auth')
 const router = new express.Router()
 
@@ -10,7 +11,7 @@ router.get("/me", authorizeUser, getMe)
 router.patch("/update", authorizeUser, updateUser)
 router.patch("/change", authorizeAdmin, changeRoleAndStatus)
 router.post("/forgot-password", forgotPassword)
-router.get("/reset-password/:id/:token", resetPassword)
+router.get("/reset-password/:id/:token", verifyForPassword)
 router.patch("/changepassword", authorizeUser, changePassword)
 router.delete("/delete/:userId", authorizeAdmin, deleteUser)
 
