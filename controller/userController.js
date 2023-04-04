@@ -4,6 +4,7 @@ const ResetToken = require("../models/resetPasswordModel")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require('fs');
+const { resetPasswordEmail, welcomeEmail } = require("../services/emailService");
 
 const registerUser = async (req, res) => {
   const formData = req.body;
@@ -23,6 +24,10 @@ const registerUser = async (req, res) => {
     });
 
     const registeredUser = await user.save();
+
+    const welcomeUrl = `${process.env.HOST_URL}${process.env.PORT}`
+
+    welcomeEmail(user.email, welcomeUrl, user.firstName)
 
     const { password, ...userData } = registeredUser._doc;
 
@@ -179,17 +184,16 @@ const forgotPassword = async (req, res) => {
       email: user.email
     };
 
-    const secret = process.env.JWT_SECRET + user.password
-
-    let token = jwt.sign(payload, secret, {
+    let token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "5m",
     });
 
-    token = new ResetToken({token})
+    token = new ResetToken({ token })
     const resetToken = await token.save()
 
-    const forgotLink = `${process.env.HOST_URL}3000/reset-password/${user._id}/${resetToken._id}`
-    console.log(forgotLink);
+    // const resetLink = `${process.env.HOST_URL}3000/reset-password/${resetToken._id}`
+    const resetLink = `http://192.168.2.66:3000/reset-password/${resetToken._id}`
+    resetPasswordEmail(user.email, resetLink, user.firstName)
     res.status(200).json({ msg: "Mail send successfully for forgot password", data: formData });
 
   } catch (error) {
@@ -199,29 +203,55 @@ const forgotPassword = async (req, res) => {
 
 }
 
-const resetPassword = async (req, res) => {
-  const { id, token } = req.params
+const checkTokenExpiry = async (req, res) => {
+  const tokenId = req.params?.tokenId
   try {
-    let user = await User.findOne({ _id: id });
-
-    if (!user) {
-      return res.status(404).json({ msg: "User not Found" });
+    const resetToken = await ResetToken.findById(tokenId)
+    if (!resetToken) {
+      return res.status(404).json({ msg: "Reset-Token Not Found" });
     }
-    const secret = process.env.JWT_SECRET + user.password
 
-    const verify = jwt.verify(token, secret)
-    console.log(Date.now() / 1000);
-    console.log(verify.exp);
-    console.log(verify.exp > new Date().toUTCString());
-    res.status(200).json({ msg: "Verified" })
+    const decoded = jwt.verify(resetToken.token, process.env.JWT_SECRET);
 
+    if (!(decoded.exp > (Date.now() / 1000))) {
+      return res.status(410).json({ msg: "Reset-Token Expired" });
+    };
+
+    const userId = decoded.user
+
+    res.status(200).json({ msg: "User Authorized", data: userId });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: error.message });
   }
+}
 
+const resetPassword = async (req, res) => {
+  const { userId } = req.params
+  let formData = req.body;
+  try {
+    let user = await User.findOne({ _id: userId });
 
-  console.log(id, token);
+    if (!user) {
+      return res.status(404).json({ msg: "User not Found" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const newPassword = await bcrypt.hash(formData.password, salt);
+
+    await User.findByIdAndUpdate(
+      user._id,
+      { password: newPassword },
+      {
+        new: true,
+      }
+    );
+    await ResetToken.findByIdAndDelete(formData?.tokenId)
+    res.status(200).json({ msg: "Password Reset Successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
+  }
 }
 
 const verifyForPassword = async (req, res) => {
@@ -282,6 +312,7 @@ module.exports = {
   changeRoleAndStatus,
   deleteUser,
   forgotPassword,
+  checkTokenExpiry,
   verifyForPassword,
   resetPassword,
   changePassword,

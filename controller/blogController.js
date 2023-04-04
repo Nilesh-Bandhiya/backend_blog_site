@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const addBlog = async (req, res) => {
   const formData = req.body;
+
   try {
     const data = { ...formData, image: req.file?.filename, userId: req.user };
     const blog = new Blog(data);
@@ -127,6 +128,17 @@ const getMyBlogs = async (req, res) => {
   }
 };
 
+const getBlogImage = async (req, res) => {
+  try {
+    
+    console.log("req gate");
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: error.message });
+  }
+}
+
 module.exports = {
   addBlog,
   getBlog,
@@ -134,4 +146,5 @@ module.exports = {
   deleteBlog,
   getAllBlogs,
   getMyBlogs,
+  getBlogImage
 };
