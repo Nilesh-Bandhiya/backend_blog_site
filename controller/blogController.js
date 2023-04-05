@@ -1,5 +1,6 @@
 const Blog = require("../models/blogModel");
 const fs = require('fs');
+const path = require('path');
 
 
 const addBlog = async (req, res) => {
@@ -25,7 +26,7 @@ const getBlog = async (req, res) => {
     if (!blog) {
       return res.status(404).json({ msg: "Blog not Found" });
     }
-    //here first we need to convert image name to image url
+    //here first we need to convert image name to image url     
     blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
 
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blog });
@@ -85,9 +86,9 @@ const deleteBlog = async (req, res) => {
     }
 
     // here first we need to delete image so that's why we use fs.unlink
-      fs.unlink(`./images/${blog.image}`, (err) => {
-        if (err) console.log(err);
-      });
+    fs.unlink(`./images/${blog.image}`, (err) => {
+      if (err) console.log(err);
+    });
 
     await Blog.findByIdAndDelete(blogId);
 
@@ -128,16 +129,29 @@ const getMyBlogs = async (req, res) => {
   }
 };
 
-const getBlogImage = async (req, res) => {
-  try {
-    
-    console.log("req gate");
+// const getBlogImage = async (req, res) => {
+//   const imageName = req.params?.imageName;
+//   try {
+//     if (!imageName) {
+//       return res.status(404).json({ msg: "Image not Found" });
+//     }
+//   res.download(`./images/${imageName}`, (err) => {
+//     if (err) {
+//       console.log(err);
+//       //handle error
+//       return
+//     } else {
+//       console.log("image sent");
+//       //do something
+//     }
+//   })
 
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: error.message });
-  }
-}
+
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).json({ msg: error.message });
+//   }
+// }
 
 module.exports = {
   addBlog,
@@ -146,5 +160,5 @@ module.exports = {
   deleteBlog,
   getAllBlogs,
   getMyBlogs,
-  getBlogImage
+  // getBlogImage
 };
