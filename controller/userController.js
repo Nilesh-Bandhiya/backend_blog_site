@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
 
     const registeredUser = await user.save();
 
-    const welcomeUrl = `${process.env.HOST_URL}${process.env.PORT}`
+    const welcomeUrl = process.env.FRONT_HOST_URL
 
     welcomeEmail(user.email, welcomeUrl, user.firstName)
 
@@ -192,7 +192,7 @@ const forgotPassword = async (req, res) => {
     const resetToken = await token.save()
 
     // const resetLink = `${process.env.HOST_URL}3000/reset-password/${resetToken._id}`
-    const resetLink = `http://192.168.2.66:3000/reset-password/${resetToken._id}`
+    const resetLink = `${process.env.FRONT_HOST_URL}/reset-password/${resetToken._id}`
     resetPasswordEmail(user.email, resetLink, user.firstName)
     res.status(200).json({ msg: "Mail send successfully for forgot password", data: formData });
 

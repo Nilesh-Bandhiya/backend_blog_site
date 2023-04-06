@@ -1,9 +1,9 @@
-Hi Welcome riaa,
+Hi Hello, Nilesh,
 
-Welcome to Blog App.              We are Happy to know that you are a part of Our Family , Pease Wait until the our admin give you an access of Log in        
+Welcome to the Blog APP, We get your request for the reset password        
 
-Let Into Our App        
-http://192.168.2.66:5000            
+For Reset Your Password        
+http://192.168.2.66:3000/reset-password/642e4dc5d8c92d4076a48d77            
 
 Need help, or have questions? Just reply to this email, we'd love to help.        
 
