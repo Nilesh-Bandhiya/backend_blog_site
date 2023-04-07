@@ -83,20 +83,20 @@ const loginRequestEmail = (mail, welcomeUrl, name,) => {
     };
 
     // Generate an HTML email with the provided contents
-    const welcomeEmailBody = mailGenerator.generate(email);
+    const loginRequestEmailBody = mailGenerator.generate(email);
 
     // Generate the plaintext version of the e-mail (for clients that do not support HTML)
-    const welcomeEmailText = mailGenerator.generatePlaintext(email);
+    const loginRequestEmailText = mailGenerator.generatePlaintext(email);
 
-    require('fs').writeFileSync('preview.html', welcomeEmailBody, 'utf8');
-    require('fs').writeFileSync('preview.txt', welcomeEmailText, 'utf8');
+    require('fs').writeFileSync('preview.html', loginRequestEmailBody, 'utf8');
+    require('fs').writeFileSync('preview.txt', loginRequestEmailText, 'utf8');
 
     transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: mail,
         subject: 'Registeration in Blog App ',
-        html: welcomeEmailBody,
-        text: welcomeEmailText,
+        html: loginRequestEmailBody,
+        text: loginRequestEmailText,
     }, function (err) {
         if (err) return console.log(err);
         console.log('Welcome Mail sent successfully.');
