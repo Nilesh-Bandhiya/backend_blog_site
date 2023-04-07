@@ -4,7 +4,7 @@ const ResetToken = require("../models/resetPasswordModel")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require('fs');
-const { resetPasswordEmail, welcomeEmail } = require("../services/emailService");
+const { resetPasswordEmail, welcomeEmail, loginRequestEmail } = require("../services/emailService");
 
 const registerUser = async (req, res) => {
   const formData = req.body;
@@ -56,6 +56,8 @@ const loginUser = async (req, res) => {
     }
 
     if (!user.active) {
+      const welcomeUrl = process.env.FRONT_HOST_URL
+      loginRequestEmail("nilesh.bandhiya@aspiresoftserv.in", welcomeUrl, user.firstName)
       return res
         .status(400)
         .json({ msg: "You will not Log In until admin give you access" });

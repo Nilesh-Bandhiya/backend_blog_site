@@ -14,7 +14,7 @@ const transporter = mailer.createTransport({
 })
 
 // Configure mailgen by setting a theme and your product info
-var mailGenerator = new Mailgen({
+const mailGenerator = new Mailgen({
     theme: 'default',
     product: {
         // Appears in header & footer of e-mails
@@ -25,7 +25,7 @@ var mailGenerator = new Mailgen({
 
 const welcomeEmail = (mail, welcomeUrl, name) => {
 
-    var email = {
+    const email = {
         body: {
             name: `Welcome ${name}`,
             intro: `Welcome to Blog App.
@@ -34,7 +34,7 @@ const welcomeEmail = (mail, welcomeUrl, name) => {
                 instructions: `Let Into Our App`,
                 button: {
                     color: '#0000FF',
-                    text: 'Blog App',
+                    text: 'Go to App',
                     link: welcomeUrl
                 }
             },
@@ -43,10 +43,50 @@ const welcomeEmail = (mail, welcomeUrl, name) => {
     };
 
     // Generate an HTML email with the provided contents
-    var welcomeEmailBody = mailGenerator.generate(email);
+    const welcomeEmailBody = mailGenerator.generate(email);
 
     // Generate the plaintext version of the e-mail (for clients that do not support HTML)
-    var welcomeEmailText = mailGenerator.generatePlaintext(email);
+    const welcomeEmailText = mailGenerator.generatePlaintext(email);
+
+    require('fs').writeFileSync('preview.html', welcomeEmailBody, 'utf8');
+    require('fs').writeFileSync('preview.txt', welcomeEmailText, 'utf8');
+
+    transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: mail,
+        subject: 'Registeration in Blog App ',
+        html: welcomeEmailBody,
+        text: welcomeEmailText,
+    }, function (err) {
+        if (err) return console.log(err);
+        console.log('Welcome Mail sent successfully.');
+        transporter.close();
+    });
+}
+
+const loginRequestEmail = (mail, welcomeUrl, name,) => {
+
+    const email = {
+        body: {
+            name: `Hello Admin`,
+            intro: `Hii Admin please approve ${name} For the loggin`,
+            action: {
+                instructions: `For Approve User`,
+                button: {
+                    color: '#22BC66',
+                    text: 'Go to App',
+                    link: welcomeUrl
+                }
+            },
+            outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
+        }
+    };
+
+    // Generate an HTML email with the provided contents
+    const welcomeEmailBody = mailGenerator.generate(email);
+
+    // Generate the plaintext version of the e-mail (for clients that do not support HTML)
+    const welcomeEmailText = mailGenerator.generatePlaintext(email);
 
     require('fs').writeFileSync('preview.html', welcomeEmailBody, 'utf8');
     require('fs').writeFileSync('preview.txt', welcomeEmailText, 'utf8');
@@ -106,5 +146,6 @@ const resetPasswordEmail = (mail, resetLink, name) => {
 
 module.exports = {
     welcomeEmail,
-    resetPasswordEmail
+    resetPasswordEmail,
+    loginRequestEmail
 };

@@ -1,9 +1,9 @@
-Hi Hello, Nilesh,
+Hi Hello Admin,
 
-Welcome to the Blog APP, We get your request for the reset password        
+Hii Admin please approve dsads For the loggin        
 
-For Reset Your Password        
-http://192.168.2.66:3000/reset-password/642fea2326b4c4db1b86e26a            
+For Approve User        
+http://192.168.2.66:3000            
 
 Need help, or have questions? Just reply to this email, we'd love to help.        
 
