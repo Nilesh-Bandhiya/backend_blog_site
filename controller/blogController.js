@@ -54,7 +54,7 @@ const updateBlog = async (req, res) => {
 
     // here first we need to delete old image so that's why we use fs.unlink
     if (req.file?.filename) {
-      fs.unlink(`./images/${blog.image}`, (err) => {
+      fs.unlink(`images/${blog.image}`, (err) => {
         if (err) console.log(err);
       });
     }
@@ -129,29 +129,6 @@ const getMyBlogs = async (req, res) => {
   }
 };
 
-// const getBlogImage = async (req, res) => {
-//   const imageName = req.params?.imageName;
-//   try {
-//     if (!imageName) {
-//       return res.status(404).json({ msg: "Image not Found" });
-//     }
-//   res.download(`./images/${imageName}`, (err) => {
-//     if (err) {
-//       console.log(err);
-//       //handle error
-//       return
-//     } else {
-//       console.log("image sent");
-//       //do something
-//     }
-//   })
-
-
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).json({ msg: error.message });
-//   }
-// }
 
 module.exports = {
   addBlog,
@@ -160,5 +137,4 @@ module.exports = {
   deleteBlog,
   getAllBlogs,
   getMyBlogs,
-  // getBlogImage
 };

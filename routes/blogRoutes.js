@@ -3,7 +3,6 @@ const {
   addBlog,
   getAllBlogs,
   getBlog,
-  // getBlogImage,  
   updateBlog,
   deleteBlog,
   getMyBlogs
@@ -16,7 +15,6 @@ router.get("/", getAllBlogs);
 router.get("/myblogs", authorizeAdmin, getMyBlogs);
 router.post("/add", authorizeAdmin, upload.single('image'), addBlog);
 router.get("/:blogId", authorizeUser, getBlog);
-// router.get("/getimage/:imageName", authorizeUser, getBlogImage);
 router.patch("/update/:blogId", authorizeAdmin, upload.single('image'), updateBlog);
 router.delete("/delete/:blogId", authorizeAdmin, deleteBlog);
 

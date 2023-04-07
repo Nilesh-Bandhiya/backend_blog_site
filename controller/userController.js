@@ -121,6 +121,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
 const changeRoleAndStatus = async (req, res) => {
   const { _id, role, active } = req.body;
   try {
@@ -191,7 +192,6 @@ const forgotPassword = async (req, res) => {
     token = new ResetToken({ token })
     const resetToken = await token.save()
 
-    // const resetLink = `${process.env.HOST_URL}3000/reset-password/${resetToken._id}`
     const resetLink = `${process.env.FRONT_HOST_URL}/reset-password/${resetToken._id}`
     resetPasswordEmail(user.email, resetLink, user.firstName)
     res.status(200).json({ msg: "Mail send successfully for forgot password", data: formData });
