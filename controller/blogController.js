@@ -101,7 +101,7 @@ const deleteBlog = async (req, res) => {
 
 const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate("userId", "firstName");
 
     blogs.forEach((blog) => {
       blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
