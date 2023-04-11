@@ -44,7 +44,7 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.findOne({ email: formData.email });
         if (!user) {
-            return res.status(404).json({ msg: "User Not Found 12" });
+            return res.status(404).json({ msg: "User Not Found" });
         }
 
         const isMatch = await bcrypt.compare(formData.password, user.password);
@@ -65,15 +65,23 @@ const loginUser = async (req, res) => {
             user: user._id,
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: 360000,
+        const token = jwt.sign(payload, process.env.ACCESS_JWT_SECRET, {
+            expiresIn: "15m",
+        });
+
+        const refreshToken = jwt.sign(payload, process.env.REFRESH_JWT_SECRET, {
+            expiresIn: "1d",
         });
 
         const { password, ...userData } = user._doc;
 
+        await User.findByIdAndUpdate(userData._id,{
+            refreshToken:refreshToken,
+        })
+
         res
             .status(200)
-            .json({ msg: "User Logged In Successfully", data: userData, token: token });
+            .json({ msg: "User Logged In Successfully", data: userData, token: token, refreshToken: refreshToken });
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ msg: error.message });
@@ -94,7 +102,7 @@ const forgotPassword = async (req, res) => {
             email: user.email
         };
 
-        let token = jwt.sign(payload, process.env.JWT_SECRET, {
+        let token = jwt.sign(payload, process.env.ACCESS_JWT_SECRET, {
             expiresIn: "5m",
         });
 
@@ -120,7 +128,7 @@ const checkTokenExpiry = async (req, res) => {
             return res.status(404).json({ msg: "Reset-Token Not Found" });
         }
 
-        const decoded = jwt.verify(resetToken.token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(resetToken.token, process.env.ACCESS_JWT_SECRET);
 
         if (!(decoded.exp > (Date.now() / 1000))) {
             return res.status(410).json({ msg: "Reset-Token Expired" });
@@ -146,7 +154,7 @@ const resetPassword = async (req, res) => {
         }
 
         const salt = await bcrypt.genSalt(10);
-        con
+        const newPassword = await bcrypt.hash(formData.password, salt);
         await User.findByIdAndUpdate(
             user._id,
             { password: newPassword },
@@ -197,6 +205,36 @@ const changePassword = async (req, res) => {
     }
 };
 
+const handleRefreshToken = async (req, res) => {
+    try {
+        const refreshToken = req.body?.refreshToken
+        if (!refreshToken) {
+            return res.status(404).json({ msg: "Token not Found" })
+        }
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_JWT_SECRET)
+        const user = await User.findOne({ refreshToken })
+        if (!user) {
+            return res.status(404).json({ msg: "Token not Found" })
+        }
+        if (user._id.toString() !== decoded.user.toString()) {
+            return res.status(401).json({ msg: "User Not Authorize" })
+        }
+
+        const payload = {
+            user: user._id,
+        };
+
+        const token = jwt.sign(payload, process.env.ACCESS_JWT_SECRET, {
+            expiresIn: "15m",
+        });
+        
+        res.status(200).json({ msg:"New Token sended successfully", token: token })
+
+    } catch (error) {
+        res.status(500).json({ msg: error.message })
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -204,4 +242,5 @@ module.exports = {
     checkTokenExpiry,
     resetPassword,
     changePassword,
+    handleRefreshToken
 };

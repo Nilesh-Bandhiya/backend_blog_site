@@ -47,7 +47,6 @@ const updateBlog = async (req, res) => {
       return res.status(404).json({ msg: "Blog not Found" });
     }
 
-
     if (blog.userId.toString() !== req.user.toString()) {
       return res.status(401).json({ msg: "Only Blog Owner Update the Blog" });
     }
