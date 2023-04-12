@@ -78,7 +78,7 @@ const deleteUser = async (req, res) => {
     if (blogs) {
       await Blog.deleteMany({ userId: user._id });
       blogs.forEach((blog) => {
-        fs.unlink(`./images/${blog.image}`, (err) => {
+        fs.unlink(`images/${blog.image}`, (err) => {
           if (err) console.log(err);
         });
       })

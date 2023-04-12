@@ -17,7 +17,7 @@ const authorizeUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error.message);
-    res.status(401).json({ msg: error.message });
+    res.status(419).json({ msg: error.message });
   }
 };
 
@@ -42,7 +42,7 @@ const authorizeAdmin = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error.message);
-    res.status(401).json({ msg: error.message });
+    res.status(419).json({ msg: error.message });
   }
 };
 

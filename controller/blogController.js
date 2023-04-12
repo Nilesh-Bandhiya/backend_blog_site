@@ -2,7 +2,6 @@ const Blog = require("../models/blogModel");
 const fs = require('fs');
 const path = require('path');
 
-
 const addBlog = async (req, res) => {
   const formData = req.body;
 
@@ -85,7 +84,7 @@ const deleteBlog = async (req, res) => {
     }
 
     // here first we need to delete image so that's why we use fs.unlink
-    fs.unlink(`./images/${blog.image}`, (err) => {
+    fs.unlink(`images/${blog.image}`, (err) => {
       if (err) console.log(err);
     });
 
