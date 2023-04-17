@@ -1,8 +1,8 @@
-Hi Hello Admin,
+Hi Welcome Radhe,
 
-Hii Admin please approve dsads For the loggin        
+Welcome to Blog App.              We are Happy to know that you are a part of Our Family , Pease Wait until the our admin give you an access of Log in        
 
-For Approve User        
+Let Into Our App        
 http://192.168.2.66:3000            
 
 Need help, or have questions? Just reply to this email, we'd love to help.        
