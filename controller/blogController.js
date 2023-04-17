@@ -114,7 +114,7 @@ const getAllBlogs = async (req, res) => {
 
 const getMyBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ userId: req.user });
+    const blogs = await Blog.find({ userId: req.user }).populate("userId", "firstName");;
 
     blogs.forEach((blog) => {
       blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
