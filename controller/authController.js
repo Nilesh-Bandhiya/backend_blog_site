@@ -231,7 +231,8 @@ const handleRefreshToken = async (req, res) => {
         res.status(200).json({ msg:"New Token sended successfully", token: token })
 
     } catch (error) {
-        res.status(500).json({ msg: error.message })
+        console.log(error.message);
+        res.status(420).json({ msg: error.message })
     }
 }
 
