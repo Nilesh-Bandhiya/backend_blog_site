@@ -1,9 +1,9 @@
 Hi Hello Admin,
 
-Hii Admin please approve dsads For the loggin        
+Hii Admin please approve Vishal For the loggin        
 
 For Approve User        
-http://192.168.2.66:3000            
+http://192.168.177.5:3000            
 
 Need help, or have questions? Just reply to this email, we'd love to help.        
 

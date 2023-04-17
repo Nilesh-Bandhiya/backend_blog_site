@@ -27,7 +27,7 @@ const getBlog = async (req, res) => {
       return res.status(404).json({ msg: "Blog not Found" });
     }
     //here first we need to convert image name to image url     
-    blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+    blog.image = `${process.env.HOST_URL}/images/${blog.image}`
 
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blog });
   } catch (error) {
@@ -104,7 +104,7 @@ const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find({}).populate("userId", "firstName");
 
     blogs.forEach((blog) => {
-      blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+      blog.image = `${process.env.HOST_URL}/images/${blog.image}`
     })
 
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
@@ -119,7 +119,7 @@ const getMyBlogs = async (req, res) => {
     const blogs = await Blog.find({ userId: req.user });
 
     blogs.forEach((blog) => {
-      blog.image = `${process.env.HOST_URL}${process.env.PORT}/images/${blog.image}`
+      blog.image = `${process.env.HOST_URL}/images/${blog.image}`
     })
 
     res.status(200).json({ msg: "Blogs Fetched Successfully", data: blogs });
