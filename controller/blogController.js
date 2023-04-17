@@ -2,7 +2,6 @@ const Blog = require("../models/blogModel");
 const fs = require('fs');
 const path = require('path');
 
-
 const addBlog = async (req, res) => {
   const formData = req.body;
 
@@ -47,7 +46,6 @@ const updateBlog = async (req, res) => {
       return res.status(404).json({ msg: "Blog not Found" });
     }
 
-
     if (blog.userId.toString() !== req.user.toString()) {
       return res.status(401).json({ msg: "Only Blog Owner Update the Blog" });
     }
@@ -86,7 +84,7 @@ const deleteBlog = async (req, res) => {
     }
 
     // here first we need to delete image so that's why we use fs.unlink
-    fs.unlink(`./images/${blog.image}`, (err) => {
+    fs.unlink(`images/${blog.image}`, (err) => {
       if (err) console.log(err);
     });
 
@@ -116,7 +114,7 @@ const getAllBlogs = async (req, res) => {
 
 const getMyBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ userId: req.user });
+    const blogs = await Blog.find({ userId: req.user }).populate("userId", "firstName");;
 
     blogs.forEach((blog) => {
       blog.image = `${process.env.HOST_URL}/images/${blog.image}`

@@ -18,8 +18,8 @@ app.use(express.urlencoded({extended:true}))
 
 app.use('/images', express.static('images'));
 
-app.use("/users", userRoutes)
-app.use("/blogs", blogRoutes)
+app.use("/api/users", userRoutes)
+app.use("/api/blogs", blogRoutes)
 
 app.listen(port, () => {
     console.log(`blog-app listening on port ${port}`);

@@ -1,9 +1,16 @@
-Hi Hello Admin,
+Hi Welcome Radhe,
 
+<<<<<<< HEAD
 Hii Admin please approve Vishal For the loggin        
 
 For Approve User        
 http://192.168.177.5:3000            
+=======
+Welcome to Blog App.              We are Happy to know that you are a part of Our Family , Pease Wait until the our admin give you an access of Log in        
+
+Let Into Our App        
+http://192.168.2.66:3000            
+>>>>>>> dd64ce00dc314052b4d1e7f718e48bc99be9bdf8
 
 Need help, or have questions? Just reply to this email, we'd love to help.        
 
