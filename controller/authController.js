@@ -55,7 +55,7 @@ const loginUser = async (req, res) => {
 
         if (!user.active) {
             const welcomeUrl = process.env.FRONT_HOST_URL
-            loginRequestEmail("nilesh.bandhiya@aspiresoftserv.in", welcomeUrl, user.firstName)
+            loginRequestEmail("radheayar5050@gmail.com", welcomeUrl, user.firstName)
             return res
                 .status(400)
                 .json({ msg: "You will not Log In until admin give you access" });
