@@ -224,7 +224,8 @@ const handleRefreshToken = async (req, res) => {
 
     try {
       const decoded = jwt.verify(refreshToken, process.env.REFRESH_JWT_SECRET);
-      const user = await User.findOne({ refreshToken: decoded.user });
+      console.log("decoded", decoded);
+      const user = await User.findOne({ _id: decoded.user });
 
       if (!user) {
         return res.status(401).json({ msg: "User not authorized" });
